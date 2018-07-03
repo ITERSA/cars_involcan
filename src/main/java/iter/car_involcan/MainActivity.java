@@ -1,14 +1,20 @@
 package iter.car_involcan;
 
+import android.Manifest;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -74,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements EntregaFragment.O
     private static final String FTP_PASS = "c4rsc4rs";
     private static String pathInFTP = "/path";
     private static String pathEntrega = "/otherPath";
+    private static final int MY_PERMISSIONS_REQUEST_WRITE_STORAGE = 112;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,19 +102,8 @@ public class MainActivity extends AppCompatActivity implements EntregaFragment.O
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (mViewPager.getCurrentItem()){
-                    case 0:
-                        //TODO send data to FTP
-                        JSONObject json = recogidaFragment.getData();
-
-                        break;
-                    case 1:
-                        break;
-                        default:
-
-                }
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                showSaveDialog();
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });
         writeToFileHandler = new Handler() {
@@ -170,6 +166,18 @@ public class MainActivity extends AppCompatActivity implements EntregaFragment.O
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == MY_PERMISSIONS_REQUEST_WRITE_STORAGE){
+            if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                //Log.i(TAG, "Permission has been denied by user");
+            } else {
+                sendDataToServerDialog();
+            }
+        }
     }
 
     /**
@@ -268,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements EntregaFragment.O
                 writer.append(data);
                 writer.flush();
                 writer.close();
-                Log.d("DataActivity","File saved to "+file.getAbsolutePath());
+                Log.d("MainActivity","File saved to "+file.getAbsolutePath());
                 //Log.v("DataActivity", data);
                 status = 1;
             }catch (IOException e){
@@ -342,7 +350,8 @@ public class MainActivity extends AppCompatActivity implements EntregaFragment.O
         }
     }
 
-    private void sendDataToServerDialog(final String dataToFile){
+    private void sendDataToServerDialog(){
+
         AlertDialog d = new AlertDialog.Builder(MainActivity.this)
                 .setTitle(R.string.app_name)
                 .setIcon(android.R.drawable.ic_menu_save)
@@ -350,9 +359,25 @@ public class MainActivity extends AppCompatActivity implements EntregaFragment.O
                 .setPositiveButton("Si", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (dataToFile.length() > 0) {
-                            WriteToFileThread writeToFileThread = new WriteToFileThread(dataToFile.toString(), mViewPager.getCurrentItem());
-                            writeToFileThread.start();
+                        JSONObject json = null;
+                        switch (mViewPager.getCurrentItem()){
+                            case 0:
+                                //TODO send data to FTP
+                                 json = recogidaFragment.getData();
+
+                                break;
+                            case 1:
+                                json = entregaFragment.getData();
+                                break;
+                            default:
+
+                        }
+                        if (json != null){
+                        String dataToFile = json.toString();
+                            if (dataToFile.length() > 0) {
+                                WriteToFileThread writeToFileThread = new WriteToFileThread(dataToFile.toString(), mViewPager.getCurrentItem());
+                                writeToFileThread.start();
+                            }
                         }
                         dialog.dismiss();
                     }
@@ -364,5 +389,18 @@ public class MainActivity extends AppCompatActivity implements EntregaFragment.O
                     }
                 }).create();
         d.show();
+    }
+
+    private void showSaveDialog(){
+        int permission = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permission == PackageManager.PERMISSION_GRANTED) {
+            sendDataToServerDialog();
+        }else{
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_REQUEST_WRITE_STORAGE);
+            }
+        }
     }
 }
