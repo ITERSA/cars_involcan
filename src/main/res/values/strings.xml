@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Cars involcan</string>
+    <string name="action_settings">Reload</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="label_project">Proyecto</string>
+    <string name="label_plate">Matrícula</string>
+    <string name="label_driver">Conductor</string>
+    <string name="hint_trayecto">Trayecto</string>
+    <string name="hint_motivo">Motivo</string>
+    <string name="hour">Hora</string>
+    <string name="date">Fecha</string>
+    <string name="now">Now</string>
+    <string name="hint_km_init">Initial KM</string>
+    <string name="hint_km_final">Final KM</string>
+    <string name="hint_comment">Comment</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="tag_json_matricula">matricula</string>
+    <string name="tag_json_conductor">conductor</string>
+    <string name="tag_json_proyecto">proyecto</string>
+    <string name="tag_json_motivo">MotivoViaje</string>
+    <string name="tag_json_trayecto">TrayectoViaje</string>
+    <string name="tag_json_kminicial">KMInicial</string>
+    <string name="tag_json_FechaInicial">FechaInicial</string>
+    <string name="tag_json_KMFinal">KMFinal</string>
+    <string name="tag_json_FechaFinal">FechaFinal</string>
+    <string name="tag_json_Comentarios">Comentarios</string>
+    <string name="HOST">http://domain.com/service</string>
+</resources>

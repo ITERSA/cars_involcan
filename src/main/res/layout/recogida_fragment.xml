@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RecogidaFragment"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:padding="10dp"
+        android:baselineAligned="true"
+        android:layout_width="match_parent"
+
+        android:layout_height="wrap_content">
+        <TextView
+            android:textSize="16dp"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_plate"
+            android:layout_marginRight="5dp"
+            />
+
+        <Spinner
+            android:textSize="16dp"
+            android:layout_gravity="center"
+            android:id="@+id/plate_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:padding="10dp"
+        android:baselineAligned="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:textSize="16dp"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_driver"
+            android:layout_marginRight="5dp"
+            />
+        <Spinner
+            android:textSize="16dp"
+            android:layout_gravity="center"
+            android:id="@+id/driver_spinner"
+            android:layout_width="wrap_content"
+            android:layout_marginRight="5dp"
+            android:layout_height="wrap_content"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:padding="10dp"
+        android:baselineAligned="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:textSize="16dp"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_project"
+            android:layout_marginRight="5dp"
+            />
+        <Spinner
+            android:textSize="16dp"
+            android:layout_gravity="center"
+            android:id="@+id/project_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <EditText
+        android:textSize="16dp"
+        android:layout_margin="10dp"
+        android:id="@+id/edit_trayecto"
+        android:hint="@string/hint_trayecto"
+        android:layout_width="match_parent"
+        android:inputType="text"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:textSize="16dp"
+        android:layout_margin="10dp"
+        android:id="@+id/et_motivo"
+        android:hint="@string/hint_motivo"
+        android:layout_width="match_parent"
+        android:inputType="text"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <Button
+            android:layout_gravity="center"
+            android:id="@+id/btSetDateTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/now"
+             />
+        <TextView
+            android:textSize="16dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="6dp"
+            android:id="@+id/tv_Date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date"
+            android:padding="5dp"
+            android:background="@drawable/border"
+            />
+
+        <TextView
+            android:textSize="16dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="7dp"
+            android:padding="5dp"
+            android:id="@+id/tv_Time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border"
+            android:text="Hour"
+            />
+    </LinearLayout>
+
+    <EditText
+        android:textSize="16dp"
+        android:layout_margin="10dp"
+        android:id="@+id/et_km"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:maxLength="7"
+        android:hint="@string/hint_km_init"
+        />
+
+    <EditText
+        android:textSize="16dp"
+        android:layout_margin="10dp"
+        android:id="@+id/et_comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:hint="@string/hint_comment"
+        android:minLines="2"
+        />
+
+</LinearLayout>
