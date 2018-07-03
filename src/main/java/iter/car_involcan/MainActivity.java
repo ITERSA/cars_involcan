@@ -251,9 +251,9 @@ public class MainActivity extends AppCompatActivity implements EntregaFragment.O
         private File file;
         int type;
 
-        public WriteToFileThread(String _data, int _type){
+        public WriteToFileThread(JSONObject _data, int _type){
 
-            data = _data;
+            data = _data.toString();
             type = _type;
             //data = campaingName + " - " + data;
 
@@ -350,8 +350,10 @@ public class MainActivity extends AppCompatActivity implements EntregaFragment.O
         }
     }
 
+    /**
+     * Open a dialog asking if user wants to send de data to the server
+     */
     private void sendDataToServerDialog(){
-
         AlertDialog d = new AlertDialog.Builder(MainActivity.this)
                 .setTitle(R.string.app_name)
                 .setIcon(android.R.drawable.ic_menu_save)
@@ -362,22 +364,16 @@ public class MainActivity extends AppCompatActivity implements EntregaFragment.O
                         JSONObject json = null;
                         switch (mViewPager.getCurrentItem()){
                             case 0:
-                                //TODO send data to FTP
                                  json = recogidaFragment.getData();
-
                                 break;
                             case 1:
                                 json = entregaFragment.getData();
                                 break;
                             default:
-
                         }
                         if (json != null){
-                        String dataToFile = json.toString();
-                            if (dataToFile.length() > 0) {
-                                WriteToFileThread writeToFileThread = new WriteToFileThread(dataToFile.toString(), mViewPager.getCurrentItem());
-                                writeToFileThread.start();
-                            }
+                            WriteToFileThread writeToFileThread = new WriteToFileThread(json, mViewPager.getCurrentItem());
+                            writeToFileThread.start();
                         }
                         dialog.dismiss();
                     }
@@ -397,6 +393,7 @@ public class MainActivity extends AppCompatActivity implements EntregaFragment.O
             sendDataToServerDialog();
         }else{
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
                 ActivityCompat.requestPermissions(MainActivity.this,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
                         MY_PERMISSIONS_REQUEST_WRITE_STORAGE);
