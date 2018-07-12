@@ -159,8 +159,12 @@ public class EntregaFragment extends Fragment implements ManageData, DatePickerD
             object.put(getString(R.string.tag_json_proyecto), project_spinner.getSelectedItem().toString());
             object.put(getString(R.string.tag_json_trayecto), et_trip.getText().toString());
             object.put(getString(R.string.tag_json_motivo), et_reason.getText().toString());
-            object.put(getString(R.string.tag_json_FechaInicial), ""+tvDate.getText().toString() + " " + tvTime.getText().toString());
-            object.put(getString(R.string.tag_json_kminicial), et_km.getText().toString());
+            String date = tvDate.getText().toString() + "_" + tvTime.getText().toString();
+            date = date.replace(" ", "-");
+            date = date.replace(",", "");
+            date = date.replace(":", "-");
+            object.put(getString(R.string.tag_json_Fecha), "" + date);
+            object.put(getString(R.string.tag_json_KM), et_km.getText().toString());
             object.put(getString(R.string.tag_json_Comentarios), et_comment.getText().toString());
         } catch (JSONException e) {
             e.printStackTrace();
@@ -171,7 +175,7 @@ public class EntregaFragment extends Fragment implements ManageData, DatePickerD
     @Override
     public void setData(JSONObject json) {
         if (plate_spinner != null){
-            updateSpinner(setJsonData(json, getString(R.string.tag_json_matricula)), plate_spinner, getString(R.string.label_plate));
+            updateSpinner(setJsonData(json, getString(R.string.tag_json_matriculas)), plate_spinner, getString(R.string.label_plate));
         }
         if (project_spinner != null){
             updateSpinner(setJsonData(json, getString(R.string.tag_json_proyecto)), project_spinner, getString(R.string.label_project));
@@ -257,7 +261,13 @@ public class EntregaFragment extends Fragment implements ManageData, DatePickerD
                 strings = new String[length];
                 for (int i = 0; i < length; i++){
                     try {
-                        strings[i] = jsonArray.getString(i);
+                        if (tag.contentEquals(getString(R.string.tag_json_matriculas))){
+                            JSONObject currentObject = jsonArray.getJSONObject(i);
+                            String matricula = currentObject.getString(getString(R.string.tag_json_matricula));
+                            String modelo = currentObject.getString(getString(R.string.tag_json_modelo));
+                            strings[i]= modelo + " - " + matricula;
+                        }else
+                            strings[i] = jsonArray.getString(i);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

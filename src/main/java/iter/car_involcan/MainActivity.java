@@ -1,6 +1,7 @@
 package iter.car_involcan;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -44,9 +45,11 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
@@ -78,9 +81,10 @@ public class MainActivity extends AppCompatActivity implements EntregaFragment.O
     private static final int FTP_PORT = 12221;
     private static final String FTP_USER = "cars";
     private static final String FTP_PASS = "c4rsc4rs";
-    private static String pathInFTP = "/path";
-    private static String pathEntrega = "/otherPath";
+    private static String pathInFTP = "/pending";
+    private static String pathEntrega = "/devueltos";
     private static final int MY_PERMISSIONS_REQUEST_WRITE_STORAGE = 112;
+    private ProgressDialog pd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements EntregaFragment.O
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
+                pd.dismiss();
                 String fileName = (String)msg.obj;
                 if (msg.what == 1)
                     Toast.makeText(getApplicationContext(),"Fichero subido con exito "+fileName, Toast.LENGTH_LONG).show();
@@ -137,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements EntregaFragment.O
     @Override
     protected void onStart() {
         super.onStart();
-        //requestJson();
+        requestJson();
     }
 
     @Override
@@ -156,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements EntregaFragment.O
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            //requestJson();
+            requestJson();
             return true;
         }
 
@@ -230,15 +235,14 @@ public class MainActivity extends AppCompatActivity implements EntregaFragment.O
                     recogidaFragment.setData(response);
                     entregaFragment.setData(response);
                 }
-
             }
         }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
                 String currentError ="Error getting info from server.";
-                if (error != null)
-                    currentError = error.getMessage().toString();
+                /*if (error != null)
+                    currentError = error.getMessage().toString();*/
                 Toast.makeText(getApplicationContext(), currentError, Toast.LENGTH_LONG).show();
             }
         });
@@ -263,8 +267,25 @@ public class MainActivity extends AppCompatActivity implements EntregaFragment.O
             folder.mkdirs();
             // Create the file.
             //String date = new SimpleDateFormat("HH-mm-ss_dd-MM-yyyy").format(new Date());
-            String filename = "filename";   //TODO change name
-            file = new File(folder, filename+".json");
+            String matricula ="";
+            String conductor = "";
+            String proyecto = "";
+            String fecha ="";
+            try {
+                matricula = _data.getString(getString(R.string.tag_json_matricula));
+                conductor = _data.getString(getString(R.string.tag_json_conductor));
+                proyecto = _data.getString(getString(R.string.tag_json_proyecto));
+                fecha = _data.getString((getString(R.string.tag_json_Fecha)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            String filename = matricula + conductor + proyecto + fecha;   //TODO change name
+            filename = filename.trim();
+            filename = filename.replaceAll("\\s+","");
+            filename = filename.replace(".", "");
+            filename = StringUtils.stripAccents(filename);
+
+            file = new File(folder, filename + ".json");
         }
 
         @Override
@@ -321,7 +342,7 @@ public class MainActivity extends AppCompatActivity implements EntregaFragment.O
                         buffIn=new BufferedInputStream(new FileInputStream(f));
                         // FileInputStream in = new FileInputStream(f);
                         String finalPath = pathInFTP;
-                        if (type == 0){
+                        if (type == 1){
                             finalPath = pathEntrega;
                         }
                         con.changeWorkingDirectory(finalPath);
@@ -354,8 +375,12 @@ public class MainActivity extends AppCompatActivity implements EntregaFragment.O
      * Open a dialog asking if user wants to send de data to the server
      */
     private void sendDataToServerDialog(){
+        String text = getString(R.string.title_recogida);
+        if (mViewPager.getCurrentItem() == 1){
+            text = getString(R.string.title_entrega);
+        }
         AlertDialog d = new AlertDialog.Builder(MainActivity.this)
-                .setTitle(R.string.app_name)
+                .setTitle(text)
                 .setIcon(android.R.drawable.ic_menu_save)
                 .setMessage("¿Desea Enviar los datos al FTP?")
                 .setPositiveButton("Si", new DialogInterface.OnClickListener() {
@@ -376,6 +401,12 @@ public class MainActivity extends AppCompatActivity implements EntregaFragment.O
                             writeToFileThread.start();
                         }
                         dialog.dismiss();
+                        pd = new ProgressDialog(MainActivity.this);
+                        pd.setTitle(R.string.title_sending);
+                        pd.setMessage(getString(R.string.title_wait));
+                        pd.setCancelable(false);
+                        pd.setIndeterminate(true);
+                        pd.show();
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -392,7 +423,7 @@ public class MainActivity extends AppCompatActivity implements EntregaFragment.O
         if (permission == PackageManager.PERMISSION_GRANTED) {
             sendDataToServerDialog();
         }else{
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
                 ActivityCompat.requestPermissions(MainActivity.this,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},

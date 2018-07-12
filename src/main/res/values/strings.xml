@@ -16,14 +16,18 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="tag_json_matricula">matricula</string>
-    <string name="tag_json_conductor">conductor</string>
-    <string name="tag_json_proyecto">proyecto</string>
+    <string name="tag_json_matriculas">matriculas</string>
+    <string name="tag_json_modelo">marcamodelo</string>
+    <string name="tag_json_conductor">personas</string>
+    <string name="tag_json_proyecto">proyectos</string>
     <string name="tag_json_motivo">MotivoViaje</string>
     <string name="tag_json_trayecto">TrayectoViaje</string>
-    <string name="tag_json_kminicial">KMInicial</string>
-    <string name="tag_json_FechaInicial">FechaInicial</string>
-    <string name="tag_json_KMFinal">KMFinal</string>
-    <string name="tag_json_FechaFinal">FechaFinal</string>
+    <string name="tag_json_KM">KM</string>
+    <string name="tag_json_Fecha">Fecha</string>
     <string name="tag_json_Comentarios">Comentarios</string>
-    <string name="HOST">http://domain.com/service</string>
+    <string name="HOST">http://193.147.109.3:5000/datacar</string>
+    <string name="title_recogida">Recogida de vehículo</string>
+    <string name="title_entrega">Entrega de vehículo</string>
+    <string name="title_sending">Enviando datos</string>
+    <string name="title_wait">Espere por favor...</string>
 </resources>
